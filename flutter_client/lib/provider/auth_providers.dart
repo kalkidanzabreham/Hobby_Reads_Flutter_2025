@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hobby_reads_flutter/data/model/auth_model.dart';
 import 'package:hobby_reads_flutter/data/repository/auth_repository.dart';
 import 'package:hobby_reads_flutter/data/repository/token_manager_repository.dart';
-import 'package:hobby_reads_flutter/providers/api_providers.dart';
+import 'package:hobby_reads_flutter/provider/api_providers.dart';
 
 // Auth state
 class AuthState {

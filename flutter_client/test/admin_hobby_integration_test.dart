@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobby_reads_flutter/data/api/api_service.dart';
 import 'package:hobby_reads_flutter/data/model/hobby_model.dart';
-import 'package:hobby_reads_flutter/providers/api_providers.dart';
+import 'package:hobby_reads_flutter/provider/api_providers.dart';
 import 'package:hobby_reads_flutter/screens/admin/add_hobby_screen.dart';
 import 'package:hobby_reads_flutter/screens/admin/admin_scaffold.dart';
 import 'package:hobby_reads_flutter/screens/admin/hobbies_screen.dart';

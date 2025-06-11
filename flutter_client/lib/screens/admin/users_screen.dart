@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hobby_reads_flutter/screens/admin/admin_scaffold.dart';
-import 'package:hobby_reads_flutter/providers/user_providers.dart';
+import 'package:hobby_reads_flutter/provider/user_providers.dart';
 
 class AdminUsersScreen extends ConsumerWidget {
   const AdminUsersScreen({super.key});

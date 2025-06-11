@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hobby_reads_flutter/data/model/book_model.dart';
 import 'package:hobby_reads_flutter/data/repository/book_repository.dart';
-import 'package:hobby_reads_flutter/providers/api_providers.dart';
+import 'package:hobby_reads_flutter/provider/api_providers.dart';
 
 // Books state
 class BooksState {
