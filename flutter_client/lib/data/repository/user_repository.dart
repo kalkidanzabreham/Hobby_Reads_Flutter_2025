@@ -42,7 +42,7 @@ class UserRepository {
       String userId, Map<String, dynamic> settings) async {
     try {
       final response =
-          await _apiService.put('/users/$userId/settings', body: settings);
+      await _apiService.put('/users/$userId/settings', body: settings);
       return response;
     } catch (e) {
       throw Exception('Failed to update user settings: $e');
@@ -110,7 +110,7 @@ class UserRepository {
   Future<bool> verifyUserEmail(String token) async {
     try {
       final response =
-          await _apiService.post('/users/verify-email', body: {'token': token});
+      await _apiService.post('/users/verify-email', body: {'token': token});
       return response['verified'] ?? false;
     } catch (e) {
       throw Exception('Failed to verify email: $e');
@@ -181,7 +181,7 @@ class UserRepository {
       String userId, Map<String, dynamic> settings) async {
     try {
       final response =
-          await _apiService.put('/users/$userId/notifications', body: settings);
+      await _apiService.put('/users/$userId/notifications', body: settings);
       return response;
     } catch (e) {
       throw Exception('Failed to update notification settings: $e');
@@ -202,7 +202,7 @@ class UserRepository {
       String userId, Map<String, dynamic> settings) async {
     try {
       final response =
-          await _apiService.put('/users/$userId/privacy', body: settings);
+      await _apiService.put('/users/$userId/privacy', body: settings);
       return response;
     } catch (e) {
       throw Exception('Failed to update privacy settings: $e');

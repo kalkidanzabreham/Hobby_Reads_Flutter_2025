@@ -124,7 +124,7 @@ class BookRepository {
         } else if (coverImage is Uint8List) {
           imageBytes = coverImage;
           fileName =
-              'cover_${DateTime.now().millisecondsSinceEpoch}.jpg'; // Generate a filename for web
+          'cover_${DateTime.now().millisecondsSinceEpoch}.jpg'; // Generate a filename for web
         } else {
           throw Exception('Unsupported image type');
         }
