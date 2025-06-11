@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:hobby_reads_flutter/data/repository/token_manager_repository.dart';
 import 'package:flutter/foundation.dart'; // Import for debugPrint
+import 'dart:io'; // Import for SocketException
 
 class ApiException implements Exception {
   final int statusCode;
@@ -19,16 +20,16 @@ class ApiException implements Exception {
 class ApiService {
   final String baseUrl;
   final TokenManagerRepository _tokenManager;
-  final http.Client _client;
+  final Dio _dio;
 
   ApiService({
     required this.baseUrl,
     required TokenManagerRepository tokenManager,
-    http.Client? client,
+    Dio? dio,
   })  : _tokenManager = tokenManager,
-        _client = client ?? http.Client();
+        _dio = dio ?? Dio();
 
-  // HTTP Headers
+  // HTTP Headers (will be handled by interceptors)
   Future<Map<String, String>> _getHeaders({bool requiresAuth = true}) async {
     final headers = {
       'Content-Type': 'application/json',
@@ -47,16 +48,16 @@ class ApiService {
 
   // HTTP Methods
   Future<dynamic> get(
-    String endpoint, {
-    Map<String, String>? queryParams,
-    bool requiresAuth = true,
-  }) async {
+      String endpoint, {
+        Map<String, String>? queryParams,
+        bool requiresAuth = true,
+      }) async {
     try {
-      final uri =
-          Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
-      final response = await _client.get(
-        uri,
-        headers: await _getHeaders(requiresAuth: requiresAuth),
+      final response = await _dio.get(
+        baseUrl + endpoint,
+        queryParameters: queryParams,
+        options:
+        Options(headers: await _getHeaders(requiresAuth: requiresAuth)),
       );
 
       return _handleResponse(response);
@@ -66,18 +67,18 @@ class ApiService {
   }
 
   Future<dynamic> post(
-    String endpoint, {
-    Map<String, dynamic>? body,
-    Map<String, String>? queryParams,
-    bool requiresAuth = true,
-  }) async {
+      String endpoint, {
+        Map<String, dynamic>? body,
+        Map<String, String>? queryParams,
+        bool requiresAuth = true,
+      }) async {
     try {
-      final uri =
-          Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
-      final response = await _client.post(
-        uri,
-        headers: await _getHeaders(requiresAuth: requiresAuth),
-        body: body != null ? json.encode(body) : null,
+      final response = await _dio.post(
+        baseUrl + endpoint,
+        queryParameters: queryParams,
+        data: body,
+        options:
+        Options(headers: await _getHeaders(requiresAuth: requiresAuth)),
       );
 
       return _handleResponse(response);
@@ -87,18 +88,18 @@ class ApiService {
   }
 
   Future<dynamic> put(
-    String endpoint, {
-    Map<String, dynamic>? body,
-    Map<String, String>? queryParams,
-    bool requiresAuth = true,
-  }) async {
+      String endpoint, {
+        Map<String, dynamic>? body,
+        Map<String, String>? queryParams,
+        bool requiresAuth = true,
+      }) async {
     try {
-      final uri =
-          Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
-      final response = await _client.put(
-        uri,
-        headers: await _getHeaders(requiresAuth: requiresAuth),
-        body: body != null ? json.encode(body) : null,
+      final response = await _dio.put(
+        baseUrl + endpoint,
+        queryParameters: queryParams,
+        data: body,
+        options:
+        Options(headers: await _getHeaders(requiresAuth: requiresAuth)),
       );
 
       return _handleResponse(response);
@@ -108,18 +109,18 @@ class ApiService {
   }
 
   Future<dynamic> patch(
-    String endpoint, {
-    Map<String, dynamic>? body,
-    Map<String, String>? queryParams,
-    bool requiresAuth = true,
-  }) async {
+      String endpoint, {
+        Map<String, dynamic>? body,
+        Map<String, String>? queryParams,
+        bool requiresAuth = true,
+      }) async {
     try {
-      final uri =
-          Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
-      final response = await _client.patch(
-        uri,
-        headers: await _getHeaders(requiresAuth: requiresAuth),
-        body: body != null ? json.encode(body) : null,
+      final response = await _dio.patch(
+        baseUrl + endpoint,
+        queryParameters: queryParams,
+        data: body,
+        options:
+        Options(headers: await _getHeaders(requiresAuth: requiresAuth)),
       );
 
       return _handleResponse(response);
@@ -129,16 +130,16 @@ class ApiService {
   }
 
   Future<dynamic> delete(
-    String endpoint, {
-    Map<String, String>? queryParams,
-    bool requiresAuth = true,
-  }) async {
+      String endpoint, {
+        Map<String, String>? queryParams,
+        bool requiresAuth = true,
+      }) async {
     try {
-      final uri =
-          Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
-      final response = await _client.delete(
-        uri,
-        headers: await _getHeaders(requiresAuth: requiresAuth),
+      final response = await _dio.delete(
+        baseUrl + endpoint,
+        queryParameters: queryParams,
+        options:
+        Options(headers: await _getHeaders(requiresAuth: requiresAuth)),
       );
 
       return _handleResponse(response);
@@ -149,64 +150,48 @@ class ApiService {
 
   // File Upload
   Future<dynamic> uploadFile(
-    String endpoint,
-    List<int> fileBytes,
-    String fileName, {
-    Map<String, String>? fields,
-    bool requiresAuth = true,
-  }) async {
+      String endpoint,
+      List<int> fileBytes,
+      String fileName, {
+        Map<String, String>? fields,
+        bool requiresAuth = true,
+      }) async {
     try {
-      final uri = Uri.parse('$baseUrl$endpoint');
-      final request = http.MultipartRequest('POST', uri);
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(fileBytes, filename: fileName),
+        ...?fields?.map((key, value) => MapEntry(key, value)),
+      });
 
-      // Do not set Content-Type header for MultipartRequest, it's handled automatically
-      final headers = await _getHeaders(requiresAuth: requiresAuth);
-      headers.remove('Content-Type'); // Remove application/json
-      request.headers.addAll(headers);
-
-      if (fields != null) {
-        request.fields.addAll(fields);
-      }
-
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'file',
-          fileBytes,
-          filename: fileName,
-        ),
+      final response = await _dio.post(
+        baseUrl + endpoint,
+        data: formData,
+        options:
+        Options(headers: await _getHeaders(requiresAuth: requiresAuth)),
       );
 
-      final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return json.decode(responseBody);
-      } else {
-        throw Exception('Failed to upload file: ${response.statusCode}');
-      }
+      return _handleResponse(response);
     } catch (e) {
-      throw Exception('Failed to upload file: $e');
+      throw _handleError(e, 'UPLOAD', endpoint);
     }
   }
 
   // Cleanup
   void dispose() {
-    _client.close();
+    _dio.close();
   }
 
   // Response handling
-  dynamic _handleResponse(http.Response response) {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      if (response.body.isEmpty) return null;
-      return json.decode(response.body);
+  dynamic _handleResponse(Response response) {
+    if (response.statusCode! >= 200 && response.statusCode! < 300) {
+      if (response.data == null) return null;
+      return response.data;
     } else {
       debugPrint(
-          'API Error: Status ${response.statusCode}, Body: ${response.body}');
-      final errorBody =
-          response.body.isNotEmpty ? json.decode(response.body) : null;
+          'API Error: Status ${response.statusCode}, Body: ${response.data}');
+      final errorBody = response.data;
       final message = errorBody?['message'] ?? 'Unknown error occurred';
       throw ApiException(
-        statusCode: response.statusCode,
+        statusCode: response.statusCode!,
         message: message,
         data: errorBody,
       );
@@ -215,22 +200,47 @@ class ApiService {
 
   // Error handling
   Exception _handleError(dynamic error, String method, String endpoint) {
-    if (error is ApiException) {
+    if (error is DioException) {
+      debugPrint('DioError: ${error.message}, Type: ${error.type}');
+      if (error.response != null) {
+        final errorBody = error.response?.data;
+        final message =
+            errorBody?['message'] ?? error.message ?? 'Unknown error occurred';
+        return ApiException(
+          statusCode: error.response!.statusCode!,
+          message: message,
+          data: errorBody,
+        );
+      } else if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.sendTimeout) {
+        return Exception('Connection timed out. Please try again.');
+      } else if (error.type == DioExceptionType.badResponse) {
+        final errorBody = error.response?.data;
+        final message =
+            errorBody?['message'] ?? error.message ?? 'Unknown error occurred';
+        return ApiException(
+          statusCode: error.response!.statusCode!,
+          message: message,
+          data: errorBody,
+        );
+      } else if (error.type == DioExceptionType.unknown) {
+        if (error.error is SocketException) {
+          return Exception(
+              'Cannot connect to server. Please check your internet connection and ensure the backend server is running.');
+        }
+      }
+      return ApiException(
+        statusCode: error.response?.statusCode ?? 500,
+        message: error.message ?? 'Unknown error occurred',
+        data: error.response?.data,
+      );
+    } else if (error is ApiException) {
       return error;
     }
 
-    // Network/connection errors
-    if (error.toString().contains('Failed host lookup') ||
-        error.toString().contains('Connection refused') ||
-        error.toString().contains('No address associated with hostname')) {
-      return Exception(
-          'Cannot connect to server. Please check your internet connection and ensure the backend server is running.');
-    }
-
-    if (error.toString().contains('Connection timed out')) {
-      return Exception('Server request timed out. Please try again.');
-    }
-
+    // Generic error
     return Exception('Failed to make $method request to $endpoint: $error');
   }
 }
+

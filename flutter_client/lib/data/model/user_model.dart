@@ -79,7 +79,7 @@ class UserModel {
     }
     try {
       displayName =
-          json['displayName'] is String ? json['displayName'] as String : null;
+      json['displayName'] is String ? json['displayName'] as String : null;
     } catch (e) {
       print(
           "Error parsing displayName: $e, Value: ${json['displayName']}, Type: ${json['displayName'].runtimeType}");
@@ -139,15 +139,15 @@ class UserModel {
     try {
       notificationSettings =
           (json['notificationSettings'] as Map<String, dynamic>?)?.map(
-        (key, value) => MapEntry(key, value == true),
-      );
+                (key, value) => MapEntry(key, value == true),
+          );
     } catch (e) {
       print(
           "Error parsing notificationSettings: $e, Value: ${json['notificationSettings']}, Type: ${json['notificationSettings'].runtimeType}");
     }
     try {
       privacySettings = (json['privacySettings'] as Map<String, dynamic>?)?.map(
-        (key, value) => MapEntry(key, value == true),
+            (key, value) => MapEntry(key, value == true),
       );
     } catch (e) {
       print(
