@@ -1,11 +1,22 @@
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 dotenv.config();
-export const host = process.env.DB_HOST;
-export const user = process.env.DB_USER;
-export const password = process.env.DB_PASSWORD;
-export const database = process.env.DB_NAME;
-export const waitForConnections = true;
-export const connectionLimit = 10;
-export const queueLimit = 0;
+
+const host = process.env.DB_HOST;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
+const database = process.env.DB_NAME;
+const waitForConnections = true;
+const connectionLimit = 10;
+const queueLimit = 0;
 
 console.log(process.env.DB_NAME);
+
+module.exports = {
+  host,
+  user,
+  password,
+  database,
+  waitForConnections,
+  connectionLimit,
+  queueLimit
+};

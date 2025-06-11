@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hobby_reads_flutter/data/model/user_model.dart';
 import 'package:hobby_reads_flutter/data/repository/user_repository.dart';
-import 'package:hobby_reads_flutter/providers/api_providers.dart';
+import 'package:hobby_reads_flutter/provider/api_providers.dart';
 
 // Provider for UserRepository
 final userRepositoryProvider = Provider<UserRepository>((ref) {

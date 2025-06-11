@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hobby_reads_flutter/providers/connection_providers.dart';
+import 'package:hobby_reads_flutter/provider/connection_providers.dart';
 import 'package:hobby_reads_flutter/screens/shared/app_scaffold.dart';
 
 class ConnectionsScreen extends ConsumerStatefulWidget {

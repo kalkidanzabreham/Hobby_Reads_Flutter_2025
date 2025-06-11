@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hobby_reads_flutter/screens/shared/app_scaffold.dart';
-import 'package:hobby_reads_flutter/providers/book_providers.dart';
+import 'package:hobby_reads_flutter/provider/book_providers.dart';
 
 class AddBookScreen extends ConsumerStatefulWidget {
   const AddBookScreen({super.key});

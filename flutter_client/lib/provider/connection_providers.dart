@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hobby_reads_flutter/data/model/connection_model.dart';
 import 'package:hobby_reads_flutter/data/repository/connection_repository.dart';
-import 'package:hobby_reads_flutter/providers/api_providers.dart';
-import 'package:hobby_reads_flutter/providers/auth_providers.dart';
+import 'package:hobby_reads_flutter/provider/api_providers.dart';
+import 'package:hobby_reads_flutter/provider/auth_providers.dart';
 
 // My Connections State
 class MyConnectionsState {

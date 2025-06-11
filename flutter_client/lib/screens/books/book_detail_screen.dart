@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hobby_reads_flutter/data/model/book_model.dart';
-import 'package:hobby_reads_flutter/providers/book_providers.dart';
-import 'package:hobby_reads_flutter/providers/auth_providers.dart';
+import 'package:hobby_reads_flutter/provider/book_providers.dart';
+import 'package:hobby_reads_flutter/provider/auth_providers.dart';
 import 'package:hobby_reads_flutter/screens/shared/app_scaffold.dart';
 
 class BookDetailScreen extends ConsumerStatefulWidget {
