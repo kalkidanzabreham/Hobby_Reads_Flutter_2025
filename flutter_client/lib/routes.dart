@@ -40,7 +40,19 @@ class AppRouter {
             bookId: args['bookId'] as int,
             book: args['book'],
           ),
-        )
+        );
+      
+      // Connection Routes
+      case '/connections':
+        return MaterialPageRoute(builder: (_) => const ConnectionsScreen());
+      
+      // Profile Routes
+      case '/profile':
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      
+      // Trade Routes
+      case '/trades':
+        return MaterialPageRoute(builder: (_) => const TradeRequestsScreen());
       
       // Admin Routes
       case '/admin':
